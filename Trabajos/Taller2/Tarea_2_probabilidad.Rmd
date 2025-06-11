@@ -1,0 +1,383 @@
+---
+title: "Tarea 1: Técnicas de Conteo"
+author: 
+  - "Julián David Albarracín Galindo"
+  - "Julián David Velandia Neuta"
+  - "Tomás Alejandro Bermúdez Guáqueta"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true            # Activa la tabla de contenido
+    toc_float: true      # Índice flotante al lado
+    number_sections: true
+    theme: darkly       
+    css: estilo.css      # Enlace al archivo de estilos personalizado
+---
+
+# Descripción
+
+A continuación se presenta el desarrollo de los ejercicios propuestos, pertenecientes al libro *Probabilidad y Estadística para Ingeniería y Ciencias (9a Edición)*, concretamente los encontrados en el capítulo 2, los ejercicios impares del 2.103 al 2.127.
+
+# Desarrollo
+
+## Ejercicio 2.103
+
+***Enunciado:*** Un suero de la verdad tiene la propiedad de que  90% de los sospechosos culpables se juzgan de forma adecuada, mientras que, por supuesto, 10% de los sospechosos culpables erróneamente se consideran inocentes. Por otro lado, a los sospechosos inocentes se les juzga de manera errónea 1% de las veces. Si se aplica el suero a un sospechoso, que se selecciona de un grupo de sospechosos en el cual sólo 5% ha cometido un delito, y éste indica que es culpable, ¿cuál es la probabilidad de que sea inocente?
+
+***Enunciado:*** Para hallar la probabilidad se divide la cantidad de casos favorables sobre la cantidad de casos totales
+
+```{r 2.103, echo=FALSE}
+## b = culpable
+## a = juzgado culpable
+p.b <- 0.05
+p.bc <- 1 - p.b
+p.anb <- 0.9*p.b
+p.acnb <- p.b-p.anb
+p.anbc <- 0.01*p.bc
+p.acbc <- p.bc-p.anbc
+
+df <- data.frame(.=c("Culpable", "Inocente", "Total"),Juzgado_Culpable=c(p.anb, p.anbc, sum(p.anb, p.anbc)), Juzgado_Inocente = c(p.acnb, p.acbc, sum(p.acnb + p.acbc)), Total = c(p.b,p.bc,1))
+
+inoDadojcul <- p.anbc / (p.anbc + p.anb) ## casos favorables / casos totales
+
+df
+cat("La probabilidad de que un sospechoso culpable sea inocente es: ", inoDadojcul)
+```
+
+## Ejercicio 2.105
+
+***Enunciado: *** Mediante la comparación de las regiones apropiadas en un diagrama de Venn, verifique que:
+
+  a) (A ∩ B) ∪ (A ∩ B' ) = A
+  
+  b) A' ∩ (B' ∪ C) = (A' ∩ B' ) ∪ (A' ∩ C)
+
+***Desarrollo: *** 
+
+```{r 2.105}
+S = c(1:10)
+A = c(2,3,5,6,9)
+B = c(2,3,4,7,1)
+C = c(3,4,5,8,10)
+
+AnB <- intersect(A,B) ## 2,3
+AnBc <- intersect(A, setdiff(S,B)) ## 5,6,9
+conj_a <- union(AnB, AnBc)
+conj_a ## respuesta
+
+Ac <- setdiff(S, A)
+lad1 <- intersect(Ac, union(setdiff(S,B), C))
+lad1 ## lado izquierdo de la igualdad
+
+lad2 <- union(intersect(setdiff(S,A),setdiff(S,B)), intersect(setdiff(S,A), C))
+lad2 ## lado derecho de la igualdad
+```
+
+***Respuesta: *** Se puede ver que el conjunto conj_a es igual al conjunto A, y que los conjuntos lad1 y lad2 tienen los mismos elementos
+
+## Ejercicio 2.107
+
+***Enunciado:*** ¿Cuántas manos de bridge que contengan 4 espadas, 6 diamantes, 1 trébol y 2 corazones son posibles? 
+
+***Desarrollo: *** En este caso, cada palo del mazo de cartas contiene 13 cartas diferentes, por lo que, dependiendo de los rquerimientos que debe tener nuestra mano, se deben seleccionar un número determinado de cada uno de los palos. Luego, se calculan los casos posibles mediante el principio de multiplicación.
+
+```{r combinacion, echo=FALSE}
+comb <- function(x, y){
+  r <- factorial(x)/(factorial(y)*factorial(x-y))
+  return(r)
+}
+```
+
+```{r 2.107, echo=FALSE}
+n_espadas <-  comb(13, 4)
+n_diamantes <- comb(13, 6)
+n_trebol <- comb(13, 1)
+n_corazones <- comb(13, 2)
+total <- n_espadas * n_diamantes * n_trebol * n_corazones
+cat("El número de manos posibles es: ", total)
+```
+
+## Ejercicio 2.109
+
+***Enunciado: *** Una empresa industrial grande usa tres moteles. Locales para ofrecer hospedaje nocturno a sus clientes. Se sabe por experiencia que a 20% de los clientes se le asigna habitaciones en el Ramada Inn, a 50% en el Sheraton y a 30% en el Lakeview Motor Lodge. Si hay una falla en la plomería en 5% de las habitaciones del Ramada Inn, en 4% de las habitaciones del Sheraton y en 8% de las habitaciones del Lakeview Motor Lodge.
+
+  a) ¿cuál es la probabilidad de que a un cliente se le asigne una habitación en la que falle la plomería?
+  
+  b) ¿cuál es la probabilidad de que a una persona que ocupa una habitación en la que falla la plomería se le haya hospedado en el LakeView Motor Lodge?
+
+
+***Desarrollo: *** En ambos puntos se divide la cantidad de casos favorables entre la cantidad de casos totales
+
+```{r 2.209, echo=FALSE}
+p.A <- 0.20       ## Ramada Inn
+p.B <- 0.50       ## Sheraton
+p.C <- 0.30       ## LakeView
+## F = falla en la plomeria
+p.AnF <- p.A * 0.05
+p.AnFc <- p.A - p.AnF
+p.BnF <- p.B * 0.04
+p.BnFc <- p.B - p.BnF
+p.CnF <- p.C * 0.08
+p.CnFc <- p.C - p.CnF
+
+sum_F <- sum(p.AnF, p.BnF, p.CnF)
+
+df <- data.frame(.=c("Ramada Inn", "Sheraton", "LakeView", "Total"), 
+                 falla_plomeria = c(p.AnF, p.BnF, p.CnF, sum_F),
+                 plomeria_bien = c(p.AnFc, p.BnFc, p.CnFc, sum(p.AnFc, p.BnFc, p.CnFc)), 
+                 Total = c(p.A, p.B, p.C, 1))
+
+df
+plom_def <- sum_F / 1 ## casos favorables / casos totales
+plomF_LV <- p.CnF/sum_F ## P() ## casos favorables / casos totales
+
+cat("La probabilidad de que a un cliente se le asigne una habitación con plomeria defectuosa: ", plom_def)
+
+cat("La probabilidad de que a un cliente esté en LakeView dado que le falla la plomería: ", plomF_LV)
+```
+
+## Ejercicio 2.111
+
+***Enunciado: *** Se sabe que 2/3 de los reclusos en cierta prisión federal son menores de 25 años de edad. También se sabe que 3/5 de los reos son hombres y que 5/8 son mujeres de 25 años de edad o mayores. ¿Cuál es la probabilidad de que un prisionero seleccionado al azar de esta prisión sea mujer y tenga al menos 25 años de edad? 
+
+
+***Desarrollo: *** Por principio de inclusión y Exclusión $|A \cup B| = |A| + |B| - |A \cap B|$
+
+```{r 2.111, echo=FALSE}
+menores_25 <- 2/3
+reos_hombres <- 3/5
+reos_mujeresmas25 <- 5/8
+reos_mujeres <- 1 - reos_hombres
+mayores_25 <- 1 - menores_25
+total <- reos_mujeres + mayores_25 - reos_mujeresmas25
+
+cat("La probabilidad de que un prisionero sea mujer y tenga al menos 25 años de edad es: ", total)
+
+```
+
+## Ejercicio 2.113
+
+***Enunciado: *** De una caja que contiene 6 bolas negras y 4 verdes se extraen 3 bolas sucesivamente y cada bola se reemplaza en la caja antes de extraer la siguiente. 
+
+  a) ¿Cuál es la probabilidad de que las 3 sean del mismo color?
+  
+  b) ¿Cuál es la probabilidad de que cada color esté representado?
+
+***Desarrollo: ***
+
+  a) Tenemos 3/5 de probabilidad de sacar una bolda de color negro (6/10) y si cada vez que sacamos una la reemplazamos, también tenemos 3/5 chances de sacar una bola negra, igual con la tercera bola; por principio de la multiplicación, tenemos que multiplicar estas probabiliades tres veces para hallar la probabilidad de sacar las 3 bolas del color negro, y para el color verde es el mismo procedimiento pero con 2/5 de probabilidad, y luego se suman para hallar la probabilidad de que salgan repetidas sin importar el color. $(\frac{3}{5})^3 + (\frac{2}{5})^3$
+  
+  b) Para hallar la probabilidad de que al menos un color está representado, simplemente le quitamos los casos en los que no lo está, por lo que hay que hacer es quitarle a 1 la probabilidad de que salga consecutivo 
+
+```{r 2.113, echo=FALSE}
+prob <- (3/5)^3 + (2/5)^3
+
+cat("La probabilidad de sacar 3 bolas consecutivas del mismo color es de: ", prob)
+
+cat("La probabilidad de sacar cada color: ", 1 - prob)
+```
+
+## Ejercicio 2.115
+
+***Enunciado: *** Cierto organismo federal emplea a tres empresas consultoras (A, B y C) con probabilidades de 0.40, 0.35 y 0.25, respectivamente. Se sabe por experiencia que las probabilidades de que las empresas rebasen los costos son 0.05, 0.03 y 0.15, respectivamente. Suponga que el organismo experimenta un exceso en los costos.
+
+ a) ¿Cuál es la probabilidad de que la empresa consultora implicada sea la C?
+ b) ¿Cuál es la probabilidad de que sea la A? 
+
+***Desarrollo: *** En ambos puntos se divide la cantidad de casos favorables entre la cantidad de casos totales
+
+```{r 2.115, echo=FALSE}
+A <- 0.40
+B <- 0.35
+C <- 0.25
+RebA <- 0.05 * A
+RebB <- 0.03 * B
+RebC <- 0.15 * C
+NRA <- A - RebA
+NRB <- B - RebB
+NRC <- C - RebC
+Reb <- RebA + RebB + RebC 
+NoReb <- 1 - Reb
+
+df <- data.frame(.=c("A", "B", "C", "Total"), Rebasa = c(RebA, RebB, RebC, sum(RebA, RebB, RebC)), No_Rebasa = c(NRA, NRB, NRC, sum(NRA, NRB, NRC)), Total = c(A, B, C, sum(A, B, C))) 
+df
+
+cat("La probabilidad de que la empresa implicada sea la C es de: ", RebC/Reb)
+cat("La probabilidad de que la empresa implicada sea la A es de: ", RebA/Reb)
+```
+
+## Ejercicio 2.117
+
+***Enunciado: *** Un fabricante estudia los efectos de la temperatura de cocción, el tiempo de cocción y el tipo de aceite para la cocción al elaborar papas fritas. Se utilizan 3 diferentes temperaturas, 4 diferentes tiempos de cocción y 3 diferentes aceites. Suponga que el fabricante puede probar sólo dos combinaciones en un día.
+
+  a) ¿Cuál es la probabilidad de que elija cualquier conjunto dado de 2 corridas?
+  
+  b) ¿Cuál es la probabilidad de que utilice la temperatura más alta en cualquiera de estas 2 combinaciones?
+
+***Desarrollo: *** 
+
+  a) Por principio de la multiplicación, tenemos 36 formas posibles, y como probamos 2 en un día, hay que hallar la cantidad de combinaciones (porque el orden no importa) que tenemos para probar esas 36 formas, y luego hallar la probabilidad de esccoger una sola:                       $\frac{1}{\binom{36}{2}}$
+  
+  b) Ahora para solucionar este punto, tenemos que pensarlo como si "anclaramos" una temperatura, por lo que en vez de 3x3x4 es 1x3x4 y esto, por principio de multiplicación, lo multiplicamos por el resto de formas que NO tienen la temperatura más alta para hallar nuestros casos favorables, y dividirlo entre nuestros casos totales:                    $\frac{12 · 24}{\binom{36}{2}}$
+
+```{r 2.117, echo=FALSE}
+combinacion <- 3 * 3 * 4
+
+cat("La probabilidad de elegir cualquier conjunto de 2 pruebas: ", 1/(comb(36,2)))
+
+cat("La probabilidad de elegir cualquier conjunto de 2 pruebas: ", (12 * 24)/(comb(36,2)))
+
+```
+
+## Ejercicio 2.119
+
+***Enunciado: *** Un fabricante de cierto tipo de componente electrónico abastece a los proveedores en lotes de 20. Suponga que 60% de todos los lotes no contiene componentes defectuosos, que 30% contiene un componente defectuoso y que 10% contiene dos componentes defectuosos. Si se elige un lote del que se extraen aleatoriamente dos componentes, los cuales se prueban y ninguno resulta defectuoso,
+
+ a) ¿Cuál es la probabilidad de que haya cero componentes defectuosos en el lote?
+ b) ¿Cuál es la probabilidad de que haya un componente defectuoso en el lote?
+ c) ¿Cuál es la probabilidad de que haya dos componentes defectuosos en el lote?
+
+
+***Desarrollo: *** Para el desarrollo del problema anterior es necesario recordar lo propuesto por el teorema de Bayes, en este caso se plantearan las siguientes proposiciones:
+  
+  1) A: Sacar dos de los compontentes sin defectos
+  2) S: Sacar de los lotes **sin** defectos
+  3) U: Sacar de los lotes con **un** componente defectuoso
+  4) D: Sacar de los lotes con **dos** componentes defectuosos
+  
+Se desea calcular para la primera respuesta $P(S|A)$, por teorema de Bayes se sabe que:
+
+  $P(S|A) = \frac{P(A|S) * P(S)}{P(A)}$
+
+Se procede a calcular:
+```{r 2.119, echo=FALSE}
+p_A_dado_S <- 1
+p_S <- 0.6
+p_A_dado_U <- comb(19, 2)/comb(20, 2) ## Se dividen los casos favorables en casos totales
+p_U <- 0.3
+p_A_dado_D <- comb(18, 2)/comb(20, 2) 
+p_D <- 0.1
+p_A <- p_A_dado_S*p_S + p_A_dado_U*p_U + p_A_dado_D*p_D
+
+p_S_dado_A <- (p_A_dado_S*p_S)/(p_A)
+p_S_dado_A
+```
+
+Se desea calcular para la segunda respuesta $P(U|A)$, por teorema de Bayes se sabe que:
+
+  $P(U|A) = \frac{P(A|U) * P(U)}{P(A)}$
+
+Se procede a calcular:
+
+```{r 2.119b, echo=FALSE}
+p_U_dado_A <- (p_A_dado_U*p_U)/(p_A)
+p_U_dado_A
+```
+
+Para finalizar, la tercera respuesta es:
+
+```{r 2.119c, echo=FALSE}
+p_D_dado_A <- 1 - (p_S_dado_A + p_U_dado_A)
+p_D_dado_A
+```
+
+## Ejercicio 2.121
+
+***Enunciado: *** Una empresa constructora emplea a dos ingenieros de ventas. El ingeniero 1 hace el trabajo de estimar costos en 70% de las cotizaciones solicitadas a la empresa. El ingeniero 2 hace lo mismo en 30% de las cotizaciones. Se sabe que la tasa de error para el ingeniero 1 es tal que la probabilidad de encontrar un error en su trabajo es 0.02; mientras que la probabilidad de encontrar un error en el trabajo del ingeniero 2 es 0.04. Suponga que al revisar una solicitud de cotización se encuentra un error grave en la estimación de los costos. ¿Qué ingeniero supondría usted que hizo los cálculos? Explique su respuesta y muestre todo el desarrollo.
+
+***Desarrollo: *** Para saber cual es el probablemente falló, hay hallar la probabilidad de cada uno y coger la mayor, y para esto se divide la cantidad de casos favorables sobre la cantidad de casos totales para cada ingeniero.
+
+```{r 2.121, echo=FALSE}
+## b = ingeniero 1
+## a = error
+p.b <- 0.7
+p.bc <- 1 - p.b
+p.anb <- 0.02 * p.b
+p.acnb <- p.b - p.anb
+p.anbc <- 0.04 * p.bc
+p.acbc <- p.bc - p.anbc
+
+df <- data.frame(.=c("Ingeniero 1", "Ingeniero 2", "Total"),
+                 Error =c(p.anb, p.anbc, sum(p.anb, p.anbc)), 
+                 Sin_Error = c(p.acnb, p.acbc, sum(p.acnb, p.acbc)), 
+                 Total = c(p.b,p.bc,1))
+df
+ing1 <- p.anb / (p.anbc + p.anb) ## casos favorables / casos totales
+ing2 <- p.anbc / (p.anbc + p.anb) ## casos favorables / casos totales
+
+cat("El ingeniero 1 tiene una probabilidad de fallo de: ", ing1)
+cat("Mientras que el ingeniero 2 tiene una probabilidad de fallo de: ", ing2)
+```
+
+***Resultado: *** Elegimos despedir al ingeniero 1 porque él es el que tiene más probabilidad de hacer el trabajo con error
+
+## Ejercicio 2.123
+
+***Enunciado: *** En una planta industrial se está realizando un estudio para determinar la rapidez con la que los trabajadores lesionados regresan a sus labores después del percance. Los registros demuestran que 10% de los trabajadores lesionados son llevados al hospital para su tratamiento y que 15% regresan a su trabajo al día siguiente. Además, los estudios demuestran que 2% son llevados al hospital y regresan al trabajo al día siguiente. Si un trabajador se lesiona, ¿cuál es la probabilidad de que sea llevado al hospital, de que regrese al trabajo al día siguiente, o de ambas cosas?
+
+***Desarrollo: *** Por principio de inclusión y Exclusión $|A \cup B| = |A| + |B| - |A \cap B|$
+
+```{r 2.123, echo=FALSE}
+hospital <- 0.1
+dia_sig <- 0.15
+ambos <- hospital + dia_sig - 0.02
+
+cat("La probabilidad de que sea llevado al hospital es: ", hospital)
+cat("La probabilidad de que regrese al dia siguiente es: ", dia_sig)
+cat("La probabilidad de que pasen ambas cosas es: ", ambos)
+```
+
+## Ejercicio 2.125
+
+***Enunciado: *** Una encuesta aplicada a quienes usan un software estadístico específico indica que 10% no quedó satisfecho. La mitad de quienes no quedaron satisfechos le compraron el sistema al vendedor A. También se sabe que 20% de los encuestados se lo compraron al vendedor A. Dado que el proveedor del paquete de software fue el vendedor A, ¿cuál es la probabilidad de que un usuario específico haya quedado insatisfecho?
+
+***Desarrollo: *** Se divide la cantidad de casos favorables entre la cantidad de casos totales
+
+```{r 2.125, echo=FALSE}
+## b = Insatisfecho
+## a = Vendedor A
+p.b <- 0.1
+p.bc <- 1 - p.b
+p.a <- 0.2
+p.ac <- 1 - p.a
+p.anb <- 0.5 * p.b ## 0.5 porque es la mitad de A que no quedaron satisfechos
+p.anbc <- p.a - p.anb
+p.acnb <- p.b - p.anb
+p.acbc <- p.bc - p.anbc
+
+df <- data.frame(.=c("Insatisfecho", "Satisfecho", "Total"),
+                 Vendedor_A = c(p.anb, p.anbc, sum(p.anb, p.anbc)), 
+                 Otro = c(p.acnb, p.acbc, sum(p.acnb, p.acbc)), 
+                 Total = c(p.b,p.bc,1))
+df
+in_a <- p.anb / (p.anbc + p.anb) ## casos favorables / casos totales
+cat("La probabilidad de que haya quedado insatisfecho dado que el vendedor fue A es: ", in_a)
+```
+
+## Ejercicio 2.127
+
+***Enunciado: *** Hay 50% de probabilidad de que la reina tenga el gen de la hemofilia. Si es portadora, entonces cada uno de los príncipes tiene 50% de probabilidad independiente de tener hemofilia. Si la reina no es portadora, el príncipe no tendrá la enfermedad. Suponga que la reina tuvo tres príncipes que no padecen la enfermedad, ¿cuál es la probabilidad de que la reina sea portadora del gen?
+
+***Desarrollo: *** Para solucionar el problema se tendrán en cuenta las siguientes proposiciones:
+
+  1) R: La reina es portadora del gen
+  2) M; El principe es portador del gen, $P(M|R) = 0.5$ 
+  
+Se necesita calcular $P(R |M_{1}' * M_{2}' * M_{3}')$ siendo la probabilidad de que la reina tenga el gen sin que ninguno de sus hijos lo tenga, para ello se usará la regla de Bayes:
+
+```{r 2.127, echo=FALSE}
+p_R <- 0.5
+p_MdadoR <- 0.5
+p_no_R <- 1-p_R
+
+p_todos <- ((p_MdadoR^3)*p_R)/(((p_MdadoR^3)*p_R)+p_no_R)
+p_todos
+```
+
+# Notas
+
+La personalización de este trabajo, es decir, la modificación del tema **darkly** mediante el archivo *css* fue posible gracias al trabajo cooperativo con Chatgpt, quien ayudó a generar gran parte del codigo en *css* junto con su ayuda explicando la solución al problema de la 117b.
+
+# Bibliografía
+
+[Probabilidad y Estadística para Ingeniería y Ciencias (9a Edición)](https://bibliotecavirtualaserena.wordpress.com/wp-content/uploads/2017/05/libro_probabilidad-y-estadistica-para-ingenerc3ada-y-ciencias-ronald-e-walpole-mayers.pdf)

@@ -1,0 +1,253 @@
+---
+title: "Tarea 1: Técnicas de Conteo"
+author: 
+  - "Julián David Albarracín Galindo"
+  - "Julián David Velandia Neuta"
+  - "Tomás Alejandro Bermúdez Guáqueta"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true            # Activa la tabla de contenido
+    toc_float: true      # Índice flotante al lado
+    number_sections: true
+    theme: darkly       
+    css: estilo.css      # Enlace al archivo de estilos personalizado
+---
+
+# Descripción
+
+A continuación se presenta el desarrollo de los ejercicios propuestos, pertenecientes al libro *Probabilidad y Estadística para Ingeniería y Ciencias (9a Edición)*, concretamente los encontrados en el capítulo 2, los ejercicios impares del 2.21 al 2.47.
+
+# Desarrollo
+
+## Ejercicio 2.21
+
+***Enunciado:*** A los participantes de una convención se les ofrecen seis recorridos, cada uno de tres días, a sitios de interés. ¿De cuántas maneras se puede acomodar una persona para que vaya a uno de los recorridos planeados por la convención?
+
+***Desarrollo: *** Al tratarse de una elección donde hay 6 opciones disponibles, cada uno ofertado en 3 días distintos y, como lo menciona la pregunta, solo se necesita realizar la elección de uno de los recorridos, la respuesta consiste en valorar las maneras de elegir uno de los recorridos en uno de los días, aplicando **Principio de la multiplicación**.
+
+```{r 2.21}
+opciones <- 6 * 3
+opciones
+```
+
+***Respuesta: *** Hay 18 maneras de elegir uno de los recorridos.
+
+## Ejercicio 2.23
+
+***Enunciado: *** Si un experimento consiste en lanzar un dado y después extraer una letra al azar del alfabeto inglés, ¿cuántos puntos habrá en el espacio muestral?
+
+***Desarrollo: *** En este caso, contamos con un primer experimento, el cual corresponde al lanzamiento de un dado (cada dado cuenta con 6 caras), a continuación se selecciona una de las letras del alfabeto inglés (son 26 letras). Por ende, para saber el número de puntos que habrá en el espacio muestral, es decir, el número de resultados posibles, se aplica el **Principio de la multiplicación** como se muestra a continuación:
+
+```{r 2.23}
+experimento_1 <- 6
+experimento_2 <- 26
+resultado <- experimento_1 * experimento_2
+resultado
+```
+
+***Respuesta: *** Hay 156 puntos en el espacio muestral.
+
+## Ejercicio 2.25
+
+***Enunciado: *** Cierta marca de calzado existe en 5 diferentes estilos y cada estilo está disponible en 4 colores distintos. Si la tienda deseara mostrar la cantidad de pares de zapatos que incluya todos los diversos estilos y colores, ¿cuántos pares diferentes tendría que mostrar?
+
+***Desarrollo: *** En este problema existe un primer experimento, correspondiente a la elección del tipo de zapato, seguido a ello se realiza un segundo experimento, correspondiente a la elección del tipo de zapato. Como se quiere saber cuántos pares se tienen que mostrar, se debe tener en cuenta todas las posibilidades, es decir, todos los puntos del espacio muestral. El resultado a continuación:
+
+```{r 2.25}
+experimento_1 <- 5
+experimento_2 <- 4
+resultado <- experimento_1 * experimento_2
+resultado
+```
+
+***Resultado: *** Se deben mostrar 20 pares de zapatos distintos.
+
+## Ejercicio 2.27
+
+***Enunciado: *** Un urbanista de un nuevo fraccionamiento ofrece a un posible comprador de una casa elegir entre 4 diseños, 3 diferentes sistemas de calefacción, un garaje o cobertizo, y un patio o un porche cubierto. ¿De cuántos planos diferentes dispone el comprador?
+
+
+***Desarrollo: *** A continuación se realiza una disección de los diferentes experimentos que se deben tener en cuenta para responder la pregunta. En primer lugar, se tiene un experimento con 4 resultados posibles, que consta de elegir el diseño. En segundo lugar, el experimento tiene 3 resultados al elegir el sistema de calefacción. Para finalizar, los experimentos tres y cuatro cuentan con 2 resultados posibles cada uno, producto de la disyunción de opciones. Por ende, para responder la pregunta, utilizando el **Principio de la multiplicación** se realiza de la siguiente manera:
+
+```{r 2.27}
+experimento_1 <- 4
+experimento_2 <- 3
+experimento_3 <- 2
+experimento_4 <- 2
+resultado <- experimento_1 * experimento_2 * experimento_3 * experimento_4
+resultado
+```
+
+***Resultado: *** El comprador dispone de 48 planos diferentes.
+
+## Ejercicio 2.29
+
+***Enunciado: *** En un estudio económico de combustibles, cada uno de 3 autos de carreras se prueba con 5 marcas diferentes de gasolina en 7 lugares de prueba que se localizan en diferentes regiones del país. Si en el estudio se utilizan 2 pilotos y las pruebas se realizan una vez en cada uno de los distintos grupos de condiciones, ¿cuántas pruebas se necesita realizar?
+
+***Desarrollo: *** En este caso se presentan 4 experimentos; seleccionar un auto (3 opciones), seleccionar una marca de gasolina (5 opciones), seleccionar un lugar de prueba (7 opciones) y seleccionar uno de los pilotos (2 opciones). A continuación se desarrolla la pregunta, teniendo como base el principio de la multiplicación:
+
+```{r 2.29}
+experimento_1 <- 3
+experimento_2 <- 5
+experimento_3 <- 7
+experimento_4 <- 2
+resultado <- experimento_1 * experimento_2 * experimento_3 * experimento_4
+resultado
+```
+
+***Resultado: *** Se necesitan realizar 210 pruebas.
+
+## Ejercicio 2.31
+
+***Enunciado: ***Un testigo de un accidente automovilístico le dijo a la policía que la matrícula del culpable, que huyó, contenía las letras RLH seguidas por 3 dígitos, de los cuales el primero era un 5. Si el testigo no recuerda los 2 últimos dígitos, pero está seguro de que los 3 eran distintos, calcule la cantidad máxima de registros de automóviles que la policía tendría que revisar.
+
+***Desarrollo: *** Para solucionar el problema se debe analizar el contexto que se presenta. Hay 3 digitos en la placa, es decir números del 0 al 9, dando 10 posibilidades distintas de elección, sin embargo, se aclaran dos parametros importantes; uno, que el primer número es el 5, dos, que no se puede repetir números. Por lo anterior, los digitos a elegir se reducen a 9. Para solucionar la pregunta se utilizara una permutación sin repetición, con un conjunto n de 9 elementos, de los cuales se deben seleccionar 2, como se muestra a continuación:
+
+```{r 2.31}
+permutacion <-function(n, k){
+  resultado <- factorial(n)/factorial(n - k)
+  return(resultado)
+}
+
+permutacion(9, 2)
+```
+
+***Resultado: *** La cantidad máxima de registros que tendrá que revisar la policia es 72.
+
+## Ejercicio 2.33
+
+***Enunciado: *** Si una prueba de opción múltiple consta de 5 preguntas, cada una con 4 respuestas posibles, de las cuales sólo 1 es correcta,
+
+a) ¿de cuántas formas diferentes puede un estudiante elegir una respuesta a cada pregunta?
+
+b) ¿de cuántas maneras puede un estudiante elegir una respuesta a cada pregunta y obtener todas las respuestas incorrectas?
+
+***Desarrollo literal a: *** Se tienen 5 preguntas, el seleccionar una respuesta en cada una es un experimento diferente que consta de 4 resultados. Por ende, el procedimiento para responder la primera pregunta sería:
+
+```{r 2.33a}
+resultado <- 4^5
+resultado
+```
+
+***Resultado literal a: *** El número de formas diferentes para seleccionar una respuesta es 1024
+
+***Desarrollo literal b: *** Al saber que hay una unica respuesta correcta en las respuestas de cada pregunta, las posibilidades de elección en cada pregunta se reducen a 3. Por ende la respuesta sería la que se muestra a continuación:
+
+```{r 2.33b}
+resultado <- 3^5
+resultado
+```
+
+***Resultado literal b*** El número de formas es 243.
+
+## Ejercicio 2.35
+
+***Enunciado: ***Un contratista desea construir 9 casas, cada una con diferente diseño. ¿De cuántas formas puede ubicarlas en la calle en la que las va a construir si en un lado de ésta hay 6 lotes y en el lado opuesto hay 3?
+
+***Desarrollo: *** En este caso se tiene un conjunto de 9 elementos distintos para seleccionar, pues cada casa cuenta con un diseño diferente. Así mismo, se deben repartir en 9 espacios diferentes (no importa que haya unos al lado opuesto, todos son iguales), por lo que se propone una permutación sin repetición. En seguida se desarrolla:
+
+```{r 2.35}
+permutacion(9, 9)
+```
+
+***Resultado: *** Hay 362.880 formas distintas de acomodar las casas.
+
+## Ejercicio 2.37
+
+***Enunciado: *** ¿De cuántas maneras se pueden sentar 4 niños y 5 niñas en una fi la, si se deben alternar unos y otras?
+
+***Desarrollo: *** Dado que se tienen que alternar y además de eso tienen que alternar unos con otras, la unica manera para cumplir con las condiciones es sentar primero a una niña. Luego de ello, se presentan dos permutaciones, una en la que se selecciona la forma en la que se escogen las niñas y otra en el que se decide cómo se escogen los niños. Por principio de la multiplicación esta es una multiplicación de permutaciones:
+
+```{r 2.37}
+niñas <- permutacion(5, 5)
+niños <- permutacion(4, 4)
+resultado <- niñas * niños
+resultado
+```
+
+***Resultado: *** Hay 2880 formas de sentar al grupo de niños.
+
+## Ejercicio 2.39
+
+***Enunciado: ***En un concurso regional de ortografía, los 8 finalistas son 3 niños y 5 niñas. Encuentre el número de puntos muestrales en el espacio muestral S para el número de ordenamientos posibles al fi nal del concurso
+para
+ a) los 8 finalistas;
+ 
+ b) los 3 primeros lugares.
+
+***Desarrollo literal a: *** Se tiene un conjunto de 8 niños, se desea saber el número posible de resultados de cómo se pueden organizar dentro de los 8 finalistas, por lo que se utiliza una permutación. A continuación el desarrollo:
+
+```{r 2.39a}
+permutacion(8, 8)
+```
+
+***Resultado literal a: *** Hay 40.320 puntos muestrales para los 8 finalistas.
+
+***Desarrollo literal b: *** Del conjunto de 8 niños, se necesita seleccionar 3, donde cada uno ocupara uno de los primeros lugares, por lo que también se utiliza la permutación:
+
+```{r 2.39b}
+permutacion(8, 3)
+```
+
+***Resultado literal b: ***Hay 336 puntos muestrales para los 3 primeros lugares.
+
+## Ejercicio 2.41
+
+***Enunciado: *** Encuentre el número de formas en que se puede asignar 6 profesores a 4 secciones de un curso introductorio de psicología, si ningún profesor se asigna a más de una sección.
+
+***Desarrollo: *** Se tiene un conjunto de 6 profesores seleccionables, se tienen que asignar a 4 secciones, por lo que el número de formas corresponde a una permutación:
+
+```{r 2.41}
+permutacion(6, 4)
+```
+
+***Resultado: *** El número de formas en el que se pueden asignar es de 360 maneras.
+
+## Ejercicio 2.43
+
+***Enunciado: *** ¿De cuántas maneras se pueden plantar 5 árboles diferentes en un círculo?
+
+***Desarrollo: *** En este caso se tiene un conjunto con 5 arboles y se pide plantarlos de forma circular, al ser de esta manera lo unico que importa es la posición relativa, por lo que se trata de una permutación circular. Con esto en mente, a continuación se calculan las maneras:
+
+```{r 2.43}
+factorial(5 - 1)
+```
+
+***Resultado: *** Hay 24 formas distintas de plantar los arboles.
+
+## Ejercicio 2.45
+
+***Enunciado: *** ¿Cuántas permutaciones distintas se pueden hacer con las letras de la palabra INFINITO?
+
+***Desarrollo: *** En este caso, se cuenta con un conjunto de 8 elementos, pertenecientes a las letras de la palabra INFINITO, sin embargo, existen elementos repetidos; la letra **I** se repite 3 veces, mientras que la letra **N** se repite 2, por ende y aplicando la formula de permutación con repetición, se obtiene lo siguiente:
+
+```{r 2.45}
+resultado <- factorial(8)/(factorial(3)*factorial(2))
+resultado
+```
+
+***Resultado: *** Se pueden realizar 3360 permutaciones distintas.
+
+## Ejercicio 2.47 
+
+***Enunciado: *** ¿De cuántas formas se puede seleccionar a 3 de 8 candidatos recién graduados, igualmente calificados, para ocupar las vacantes de un despacho de contabilidad?
+
+***Desarrollo: *** En este caso se tiene un conjunto de 8 candidatos que son igualmente calificados y se desea seleccionar 3 para vacantes en un despacho. Aquí se abren dos posibilidades dada la interpretación del problema; si son vacantes distintas o si no hay distinción entre ellas. Si son vacantes distintas se realiza una permutación, si no lo son, se realiza una combinación, como se muestra a continuación:
+
+```{r 2.47}
+permutacion <- factorial(8)/factorial(8-3)
+permutacion 
+combinacion <- factorial(8)/(factorial(3)*factorial(8-3))
+combinacion
+```
+
+***Resultado: *** Por lo tanto, si no importan las vacantes hay 56 formas, si sí importan, hay 336 formas.
+
+# Notas
+
+La personalización de este trabajo, es decir, la modificación del tema **darkly** mediante el archivo *css* fue posible gracias al trabajo cooperativo con Chatgpt, quien ayudó a generar gran parte del codigo en *css*.
+
+# Bibliografía
+
+[Probabilidad y Estadística para Ingeniería y Ciencias (9a Edición)](https://bibliotecavirtualaserena.wordpress.com/wp-content/uploads/2017/05/libro_probabilidad-y-estadistica-para-ingenerc3ada-y-ciencias-ronald-e-walpole-mayers.pdf) 
